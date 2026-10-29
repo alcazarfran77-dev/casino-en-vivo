@@ -1,0 +1,24 @@
+{
+  "name": "casino-en-vivo",
+  "version": "1.0.0",
+  "description": "Casino demo multijugador en tiempo real: ruletas, blackjack, videobingo y lotería con dinero ficticio. El anfitrión proyecta y los jugadores se unen con QR o código.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test/reglas.mjs && node test/simulacion.mjs && node test/dinero.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@fontsource-variable/rubik": "^5.1.0",
+    "@fontsource/alfa-slab-one": "^5.1.0",
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.1"
+  }
+}

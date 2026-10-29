@@ -1,0 +1,831 @@
+@import url('/fonts/alfa/index.css');
+@import url('/fonts/rubik/index.css');
+
+/* ============ Tokens ============
+   Inspirado en la lotería litografiada: papel, tinta negra, tintas planas
+   sobre un muro pintado de añil. */
+:root {
+  --anil: #232c6e;
+  --anil-hondo: #161c4d;
+  --anil-claro: #33409a;
+  --muro-sombra: #0d1230;
+  --papel: #fbf3de;
+  --papel-2: #f1e4c2;
+  --tinta: #1a1423;
+  --rosa: #e4007c;
+  --cempa: #ffa400;
+  --nopal: #0c8a55;
+  --grana: #c8102e;
+  --texto: #fbf3de;
+  --texto-suave: #c4c9ec;
+  --f-display: 'Alfa Slab One', 'Rockwell Extra Bold', 'Rockwell', Georgia, serif;
+  --f-ui: 'Rubik Variable', 'Rubik', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --golpe: 3px 3px 0 var(--muro-sombra);
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--anil-hondo);
+}
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: radial-gradient(120% 80% at 50% 0%, var(--anil-claro) 0%, var(--anil) 45%, var(--anil-hondo) 100%) fixed;
+  color: var(--texto);
+  font-family: var(--f-ui);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+img {
+  max-width: 100%;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+[hidden] {
+  display: none !important;
+}
+:focus-visible {
+  outline: 3px solid var(--cempa);
+  outline-offset: 2px;
+}
+.vh {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--f-display);
+  font-weight: 400;
+  line-height: 1.1;
+  margin: 0 0 0.4em;
+  letter-spacing: 0.005em;
+}
+h1 {
+  font-size: clamp(2rem, 6vw, 3.4rem);
+}
+h2 {
+  font-size: clamp(1.4rem, 3.4vw, 2rem);
+}
+h3 {
+  font-size: 1.2rem;
+}
+p {
+  margin: 0 0 0.8em;
+}
+a {
+  color: var(--cempa);
+}
+.suave {
+  color: var(--texto-suave);
+}
+.hoja .suave,
+dialog .suave {
+  color: #5d5466;
+}
+
+/* ============ Botones (tinta y papel, golpe de imprenta) ============ */
+.btn {
+  --fondo: var(--papel);
+  --frente: var(--tinta);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  min-height: 46px;
+  padding: 0.65em 1.15em;
+  border: 2.5px solid var(--tinta);
+  border-radius: 10px;
+  background: var(--fondo);
+  color: var(--frente);
+  font-weight: 600;
+  font-size: 1.02rem;
+  line-height: 1.1;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--golpe);
+  transition: transform 0.06s, box-shadow 0.06s, filter 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.btn:hover {
+  filter: brightness(1.05);
+}
+.btn:active:not(:disabled) {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--muro-sombra);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-rosa {
+  --fondo: var(--rosa);
+  --frente: #fff;
+}
+.btn-cempa {
+  --fondo: var(--cempa);
+  --frente: var(--tinta);
+}
+.btn-nopal {
+  --fondo: var(--nopal);
+  --frente: #fff;
+}
+.btn-fantasma {
+  --fondo: transparent;
+  --frente: var(--texto);
+  border-color: rgba(251, 243, 222, 0.55);
+  box-shadow: none;
+}
+.hoja .btn-fantasma,
+dialog .btn-fantasma {
+  --frente: var(--tinta);
+  border-color: var(--tinta);
+}
+.btn-grande {
+  font-size: 1.3rem;
+  min-height: 60px;
+  padding: 0.7em 1.6em;
+  border-width: 3px;
+}
+.btn-chico {
+  min-height: 36px;
+  padding: 0.4em 0.8em;
+  font-size: 0.92rem;
+  border-width: 2px;
+  box-shadow: 2px 2px 0 var(--muro-sombra);
+}
+.btn-icono {
+  min-width: 46px;
+  padding: 0.5em;
+}
+.fila-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  align-items: center;
+}
+
+/* ============ Hojas de papel ============ */
+.hoja {
+  background: var(--papel);
+  color: var(--tinta);
+  border: 3px solid var(--tinta);
+  border-radius: 14px;
+  box-shadow: 6px 6px 0 var(--muro-sombra);
+  padding: clamp(1rem, 3vw, 1.6rem);
+}
+.hoja a {
+  color: var(--rosa);
+}
+
+/* ============ Formularios ============ */
+.campo {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+.campo > span,
+.campo-titulo {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.campo small {
+  color: #5d5466;
+  font-size: 0.85rem;
+}
+input[type='text'],
+input[type='number'],
+input[type='tel'],
+select,
+textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 0.55em 0.75em;
+  border: 2.5px solid var(--tinta);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--tinta);
+}
+textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+input[type='color'] {
+  width: 52px;
+  height: 46px;
+  padding: 2px;
+  border: 2.5px solid var(--tinta);
+  border-radius: 9px;
+  background: #fff;
+  cursor: pointer;
+}
+.opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+.opcion {
+  position: relative;
+}
+.opcion input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  cursor: pointer;
+}
+.opcion span {
+  display: inline-block;
+  padding: 0.5em 0.85em;
+  border: 2px solid var(--tinta);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--tinta);
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.opcion input:checked + span {
+  background: var(--tinta);
+  color: var(--papel);
+}
+.opcion input:focus-visible + span {
+  outline: 3px solid var(--rosa);
+  outline-offset: 2px;
+}
+.interruptor {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+.interruptor input {
+  appearance: none;
+  width: 46px;
+  height: 28px;
+  border: 2.5px solid var(--tinta);
+  border-radius: 99px;
+  background: #fff;
+  position: relative;
+  flex: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.interruptor input::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: var(--tinta);
+  transition: transform 0.15s;
+}
+.interruptor input:checked {
+  background: var(--nopal);
+}
+.interruptor input:checked::after {
+  transform: translateX(18px);
+  background: #fff;
+}
+
+/* ============ Cartas ============ */
+.carta {
+  --c: var(--rosa);
+  container-type: inline-size;
+  position: relative;
+  aspect-ratio: 5 / 7.6;
+  width: 100%;
+  color: var(--tinta);
+  user-select: none;
+}
+/* El papel va en un hijo: las unidades cqw del propio contenedor no se refieren a sí mismo */
+.carta-papel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  padding: 4.5cqw;
+  border-radius: 5cqw;
+  background: var(--papel);
+  box-shadow: 0 0.6cqw 0 rgba(0, 0, 0, 0.18);
+}
+.carta-marco {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1.8cqw solid var(--tinta);
+  border-radius: 2cqw;
+  overflow: hidden;
+  background: var(--papel);
+  min-height: 0;
+}
+.carta-arte {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--c) 45%, #fff) 0%, var(--c) 70%);
+}
+.carta-arte .emoji {
+  font-size: 50cqw;
+  line-height: 1;
+  filter: drop-shadow(1.4cqw 2cqw 0 rgba(26, 20, 35, 0.35));
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+.carta-arte svg {
+  width: 74%;
+  height: auto;
+  filter: drop-shadow(1.4cqw 2cqw 0 rgba(26, 20, 35, 0.35));
+}
+.carta-arte img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.carta-num {
+  position: absolute;
+  top: 3cqw;
+  left: 3cqw;
+  z-index: 2;
+  min-width: 15cqw;
+  height: 15cqw;
+  padding: 0 2cqw;
+  display: grid;
+  place-items: center;
+  border-radius: 99px;
+  background: var(--papel);
+  border: 1.2cqw solid var(--tinta);
+  font-family: var(--f-display);
+  font-size: 8.5cqw;
+  line-height: 1;
+}
+.carta-nombre {
+  flex: none;
+  border-top: 1.6cqw solid var(--tinta);
+  padding: 2.6cqw 2cqw 2.2cqw;
+  text-align: center;
+  font-family: var(--f-display);
+  font-size: clamp(5.2cqw, calc(100cqw / var(--largo, 8)), 10.5cqw);
+  line-height: 1.05;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.carta.completa .carta-papel {
+  padding: 0;
+  overflow: hidden;
+}
+.carta.completa .carta-marco {
+  border: none;
+  border-radius: 5cqw;
+}
+.carta.completa .carta-arte {
+  background: var(--papel-2);
+}
+
+/* Reverso del mazo */
+.reverso {
+  --c1: #7a1450;
+  --c2: #1f5bb5;
+  container-type: inline-size;
+  position: relative;
+  aspect-ratio: 5 / 7.6;
+  width: 100%;
+}
+.reverso-papel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  padding: 4.5cqw;
+  border-radius: 5cqw;
+  background: var(--papel);
+  box-shadow: 0 0.6cqw 0 rgba(0, 0, 0, 0.18);
+}
+.reverso-cara {
+  flex: 1;
+  border: 1.8cqw solid var(--tinta);
+  border-radius: 2cqw;
+  overflow: hidden;
+  position: relative;
+  display: grid;
+  place-items: center;
+  background:
+    repeating-linear-gradient(45deg, transparent 0 7cqw, rgba(255, 255, 255, 0.13) 7cqw 8.4cqw),
+    repeating-linear-gradient(-45deg, transparent 0 7cqw, rgba(255, 255, 255, 0.13) 7cqw 8.4cqw),
+    linear-gradient(160deg, var(--c1), var(--c2));
+}
+.reverso-cara img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.reverso-sello {
+  position: relative;
+  width: 74%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--papel);
+  border: 1.6cqw solid var(--tinta);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-family: var(--f-display);
+  color: var(--tinta);
+  font-size: clamp(5cqw, calc(62cqw / var(--largo, 7)), 11cqw);
+  line-height: 1;
+  padding: 4cqw;
+  box-shadow: inset 0 0 0 2.4cqw var(--papel), inset 0 0 0 3.2cqw var(--tinta);
+  overflow-wrap: break-word;
+}
+
+/* ============ Tabla ============ */
+.tabla {
+  --c: var(--rosa);
+  --n: 4;
+  container-type: inline-size;
+  position: relative;
+  background: var(--papel);
+  color: var(--tinta);
+  border: 3px solid var(--tinta);
+  border-radius: 12px;
+  box-shadow: 5px 5px 0 var(--muro-sombra);
+}
+.tabla-interior {
+  padding: 2.4cqw;
+}
+.tabla-cabeza {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5cqw;
+  min-height: 11cqw;
+  margin-bottom: 2.2cqw;
+  padding: 1.4cqw 3cqw;
+  border: 0.9cqw solid var(--tinta);
+  border-radius: 1.6cqw;
+  background: var(--c);
+  color: #fff;
+  text-align: center;
+}
+.tabla-cabeza img {
+  height: 8.5cqw;
+  width: auto;
+  max-width: 22cqw;
+  object-fit: contain;
+  border-radius: 1cqw;
+  background: #fff;
+}
+.tabla-titulo {
+  font-family: var(--f-display);
+  font-size: 7.2cqw;
+  line-height: 1;
+  text-shadow: 0.5cqw 0.5cqw 0 rgba(26, 20, 35, 0.45);
+}
+.tabla-sub {
+  display: block;
+  font-family: var(--f-ui);
+  font-weight: 600;
+  font-size: 3.2cqw;
+  margin-top: 0.6cqw;
+  opacity: 0.95;
+  text-shadow: none;
+}
+.tabla-rejilla {
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  gap: 1.6cqw;
+}
+.celda {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  border-radius: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+.celda .carta-papel {
+  box-shadow: 0 0 0 1px rgba(26, 20, 35, 0.25);
+}
+.celda .carta {
+  transition: filter 0.2s;
+}
+.celda.cantada-oculta .carta {
+  filter: none;
+}
+.tabla.chica .celda {
+  cursor: default;
+}
+.celda.patron .carta-papel {
+  box-shadow: 0 0 0 3px var(--cempa);
+}
+.celda.patron {
+  z-index: 1;
+}
+.tabla.ganadora .celda:not(.patron) .carta {
+  filter: grayscale(0.6) brightness(0.8);
+}
+.celda.temblor {
+  animation: temblor 0.35s;
+}
+@keyframes temblor {
+  20%,
+  60% {
+    transform: translateX(-5%);
+  }
+  40%,
+  80% {
+    transform: translateX(5%);
+  }
+}
+
+/* Frijolito y otras fichas */
+.ficha {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 40%;
+  aspect-ratio: 1.42;
+  transform: translate(-50%, -50%) rotate(var(--r, 0deg));
+  pointer-events: none;
+  z-index: 3;
+}
+.ficha.cae {
+  animation: cae 0.28s cubic-bezier(0.2, 1.6, 0.5, 1);
+}
+@keyframes cae {
+  from {
+    transform: translate(-50%, -50%) rotate(var(--r, 0deg)) scale(1.9);
+    opacity: 0;
+  }
+}
+.ficha-frijol {
+  border-radius: 50% 50% 47% 53% / 55% 55% 45% 45%;
+  background: radial-gradient(ellipse at 34% 30%, #e0a37a 0 9%, #9a5530 30%, #6b3218 70%, #4a200f 100%);
+  box-shadow: 0 0.6cqw 0 rgba(0, 0, 0, 0.35), 0 1.6cqw 2.2cqw rgba(0, 0, 0, 0.45);
+}
+.ficha-frijol::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 14%;
+  width: 26%;
+  height: 16%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: #f4e7d2;
+  box-shadow: inset 0 0 0 1px #6b3218;
+}
+.ficha-emoji {
+  width: auto;
+  aspect-ratio: auto;
+  font-size: 30cqw;
+  line-height: 1;
+  filter: drop-shadow(0 1cqw 1cqw rgba(0, 0, 0, 0.5));
+}
+.ficha-tache {
+  width: 70%;
+  aspect-ratio: 1;
+  background:
+    linear-gradient(45deg, transparent 43%, var(--grana) 43% 57%, transparent 57%),
+    linear-gradient(-45deg, transparent 43%, var(--grana) 43% 57%, transparent 57%);
+  filter: drop-shadow(0 0.6cqw 0 rgba(0, 0, 0, 0.4));
+}
+
+/* ============ Elementos de sala ============ */
+.codigo-grande {
+  font-family: var(--f-display);
+  font-size: clamp(2.8rem, 8vw, 6rem);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--cempa);
+  text-shadow: 4px 4px 0 var(--muro-sombra);
+  font-variant-numeric: tabular-nums;
+}
+.qr {
+  background: #fff;
+  border: 3px solid var(--tinta);
+  border-radius: 14px;
+  padding: 10px;
+  box-shadow: 6px 6px 0 var(--muro-sombra);
+}
+.qr img {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+}
+.ficha-jugador {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: 0.4em 0.85em;
+  border-radius: 999px;
+  background: var(--papel);
+  color: var(--tinta);
+  border: 2px solid var(--tinta);
+  font-weight: 600;
+  box-shadow: 2px 2px 0 var(--muro-sombra);
+}
+.ficha-jugador.desconectado {
+  opacity: 0.5;
+}
+.ficha-jugador.entra {
+  animation: entra 0.4s cubic-bezier(0.2, 1.5, 0.5, 1);
+}
+@keyframes entra {
+  from {
+    transform: scale(0.3) rotate(-8deg);
+    opacity: 0;
+  }
+}
+.ficha-jugador small {
+  font-weight: 500;
+  opacity: 0.75;
+}
+
+/* Barra de tiempo para la siguiente carta */
+.cuenta {
+  height: 8px;
+  border-radius: 99px;
+  background: rgba(251, 243, 222, 0.18);
+  overflow: hidden;
+}
+.cuenta > i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--cempa);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+/* Aviso flotante */
+.avisos {
+  position: fixed;
+  left: 50%;
+  top: max(14px, env(safe-area-inset-top));
+  transform: translateX(-50%);
+  z-index: 100;
+  display: grid;
+  gap: 8px;
+  width: min(92vw, 440px);
+  pointer-events: none;
+}
+.aviso {
+  background: var(--papel);
+  color: var(--tinta);
+  border: 2.5px solid var(--tinta);
+  border-radius: 12px;
+  padding: 0.75em 1em;
+  font-weight: 600;
+  box-shadow: 4px 4px 0 var(--muro-sombra);
+  animation: aviso-entra 0.25s ease-out;
+}
+.aviso.error {
+  background: var(--grana);
+  color: #fff;
+}
+.aviso.bien {
+  background: var(--nopal);
+  color: #fff;
+}
+@keyframes aviso-entra {
+  from {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+}
+
+/* Diálogos */
+dialog {
+  border: 3px solid var(--tinta);
+  border-radius: 16px;
+  background: var(--papel);
+  color: var(--tinta);
+  padding: 0;
+  width: min(94vw, 720px);
+  max-height: 92dvh;
+  box-shadow: 8px 8px 0 var(--muro-sombra);
+}
+dialog::backdrop {
+  background: rgba(13, 18, 48, 0.72);
+}
+.dialogo-cuerpo {
+  padding: clamp(1rem, 3vw, 1.6rem);
+}
+.dialogo-pie {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: flex-end;
+  padding: 0.9rem clamp(1rem, 3vw, 1.6rem);
+  background: var(--papel-2);
+  border-top: 2px solid var(--tinta);
+}
+
+/* Reacciones flotantes */
+.reacciones-capa {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 60;
+}
+.reaccion-vuela {
+  position: absolute;
+  bottom: -60px;
+  display: grid;
+  justify-items: center;
+  animation: sube 3.2s ease-out forwards;
+}
+.reaccion-vuela b {
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: 1;
+}
+.reaccion-vuela span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--papel);
+  color: var(--tinta);
+  border-radius: 99px;
+  padding: 0.1em 0.6em;
+  margin-top: 4px;
+}
+@keyframes sube {
+  to {
+    transform: translateY(-75vh) rotate(var(--giro, 8deg));
+    opacity: 0;
+  }
+}
+
+/* Confeti de papel picado */
+.confeti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 80;
+  overflow: hidden;
+}
+.confeti i {
+  position: absolute;
+  top: -20px;
+  width: 14px;
+  height: 18px;
+  clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%);
+  animation: cae-papel linear forwards;
+}
+@keyframes cae-papel {
+  to {
+    transform: translate(var(--dx), 110vh) rotate(var(--rot));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .confeti,
+  .reacciones-capa {
+    display: none;
+  }
+}
+
+/* En la tabla las cartas van un poco más chaparritas para que quepa en el celular */
+.tabla .carta {
+  aspect-ratio: 5 / 6.9;
+}

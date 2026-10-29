@@ -1,0 +1,9 @@
+# Despliegue en Render: New → Blueprint → elige este repositorio.
+services:
+  - type: web
+    name: casino-en-vivo
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/info

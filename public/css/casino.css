@@ -1,0 +1,839 @@
+/* ============ Casino: paño, fichas, naipes, rueda, cartones ============
+   Misma identidad de la lotería (tinta, papel, golpe de imprenta) sobre paño verde. */
+:root {
+  --pano: #0d6b47;
+  --pano-hondo: #073f2a;
+  --pano-claro: #16875a;
+  --pano-linea: rgba(251, 243, 222, 0.6);
+  --ruleta-rojo: #c8102e;
+  --ruleta-negro: #1a1423;
+  --ruleta-verde: #0c8a55;
+  --oro: #ffb21f;
+  --gana: #3ddc84;
+}
+
+body.en-pano {
+  background: radial-gradient(130% 90% at 50% 8%, var(--pano-claro) 0%, var(--pano) 42%, var(--pano-hondo) 100%) fixed;
+}
+body.en-pano .avisos .aviso:not(.error):not(.bien) {
+  background: var(--papel);
+}
+
+.dinero {
+  font-family: var(--f-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+.positivo {
+  color: var(--gana);
+}
+.negativo {
+  color: #ff8a8a;
+}
+.hoja .positivo,
+dialog .positivo {
+  color: var(--nopal);
+}
+.hoja .negativo,
+dialog .negativo {
+  color: var(--grana);
+}
+
+/* ---------- Fichas de casino ---------- */
+.ficha-casino {
+  --c: var(--grana);
+  --t: #fff;
+  --d: 46px;
+  position: relative;
+  width: var(--d);
+  height: var(--d);
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--f-display);
+  font-size: calc(var(--d) * 0.3);
+  line-height: 1;
+  color: var(--t);
+  background:
+    radial-gradient(circle, var(--c) 0 50%, rgba(251, 243, 222, 0.95) 50% 54%, var(--c) 54% 62%, transparent 62.5%),
+    repeating-conic-gradient(var(--c) 0 30deg, #fbf3de 30deg 45deg);
+  border: 2px solid var(--tinta);
+  box-shadow: 2px 2px 0 var(--muro-sombra);
+  user-select: none;
+}
+.ficha-casino[data-v='100'] {
+  --c: #f3ead0;
+  --t: var(--tinta);
+}
+.ficha-casino[data-v='500'] {
+  --c: var(--grana);
+}
+.ficha-casino[data-v='1000'] {
+  --c: #1f5bb5;
+}
+.ficha-casino[data-v='2500'] {
+  --c: var(--nopal);
+}
+.ficha-casino[data-v='10000'] {
+  --c: var(--tinta);
+  --t: var(--oro);
+}
+.ficha-casino[data-v='50000'] {
+  --c: #7a2e8f;
+}
+.ficha-casino.chica {
+  --d: 26px;
+  border-width: 1.5px;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.45);
+}
+.ficha-casino.puesta {
+  animation: ficha-cae 0.22s cubic-bezier(0.2, 1.6, 0.5, 1);
+}
+@keyframes ficha-cae {
+  from {
+    transform: translateY(-30%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+.selector-fichas {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+  padding: 0.3rem 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.selector-fichas::-webkit-scrollbar {
+  display: none;
+}
+.selector-fichas button {
+  all: unset;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 3px;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.12s;
+}
+.selector-fichas button[aria-pressed='true'] {
+  transform: translateY(-5px);
+  outline: 3px solid var(--oro);
+  outline-offset: 1px;
+}
+.selector-fichas button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.selector-fichas button:focus-visible {
+  outline: 3px solid var(--papel);
+}
+
+/* ---------- Naipes ---------- */
+.naipe {
+  --w: 64px;
+  position: relative;
+  width: var(--w);
+  height: calc(var(--w) * 1.4);
+  flex: none;
+  border-radius: calc(var(--w) * 0.09);
+  background: var(--papel);
+  border: 2px solid var(--tinta);
+  color: var(--tinta);
+  font-family: var(--f-display);
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.35);
+  user-select: none;
+}
+.naipe.roja {
+  color: var(--grana);
+}
+.naipe .esq {
+  position: absolute;
+  top: 5%;
+  left: 8%;
+  display: grid;
+  justify-items: center;
+  line-height: 0.92;
+  font-size: calc(var(--w) * 0.27);
+}
+.naipe .esq small {
+  font-size: 0.8em;
+  font-family: var(--f-ui);
+}
+.naipe .esq.abajo {
+  top: auto;
+  left: auto;
+  bottom: 5%;
+  right: 8%;
+  transform: rotate(180deg);
+}
+.naipe .centro {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: calc(var(--w) * 0.56);
+  font-family: var(--f-ui);
+  line-height: 1;
+}
+.naipe.figura .centro {
+  font-family: var(--f-display);
+  font-size: calc(var(--w) * 0.5);
+}
+.naipe.figura .centro span {
+  border: calc(var(--w) * 0.03) solid currentColor;
+  border-radius: calc(var(--w) * 0.06);
+  padding: 0.05em 0.18em;
+}
+.naipe.dorso {
+  background:
+    repeating-linear-gradient(45deg, transparent 0 7px, rgba(251, 243, 222, 0.18) 7px 9px),
+    repeating-linear-gradient(-45deg, transparent 0 7px, rgba(251, 243, 222, 0.18) 7px 9px),
+    linear-gradient(160deg, #7a1450, #1f5bb5);
+  box-shadow: inset 0 0 0 calc(var(--w) * 0.06) var(--papel), 2px 3px 0 rgba(0, 0, 0, 0.35);
+}
+.naipe.entra {
+  animation: naipe-entra 0.38s cubic-bezier(0.2, 1.2, 0.4, 1) both;
+}
+@keyframes naipe-entra {
+  from {
+    transform: translate(40%, -60%) rotate(18deg);
+    opacity: 0;
+  }
+}
+.mano-cartas {
+  display: flex;
+  align-items: flex-end;
+}
+.mano-cartas .naipe + .naipe {
+  margin-left: calc(var(--w) * -0.55);
+}
+
+/* ---------- Rueda ---------- */
+.rueda {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+}
+.rueda canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ---------- Paño de ruleta (celular) ---------- */
+.pano {
+  position: relative;
+  background: var(--pano);
+  border: 3px solid var(--tinta);
+  border-radius: 12px;
+  box-shadow: 4px 4px 0 var(--muro-sombra);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+.pano .c {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 0 1px var(--pano-linea);
+  font-family: var(--f-display);
+  color: var(--papel);
+  font-size: var(--fs, 15px);
+  cursor: pointer;
+  transition: filter 0.12s, background 0.12s;
+}
+.pano .c.num {
+  background: transparent;
+}
+.pano .c.num span {
+  display: grid;
+  place-items: center;
+  min-width: 70%;
+  height: 76%;
+  border-radius: 6px;
+}
+.pano .c.rojo span {
+  background: var(--ruleta-rojo);
+}
+.pano .c.negro span {
+  background: var(--ruleta-negro);
+}
+.pano .c.verde {
+  background: var(--ruleta-verde);
+}
+.pano .c.ext {
+  font-family: var(--f-ui);
+  font-weight: 700;
+  font-size: 12px;
+}
+.pano .c.vert span {
+  transform: rotate(-90deg);
+  white-space: nowrap;
+}
+.pano .c.ext .rombo {
+  width: 20px;
+  height: 20px;
+  transform: rotate(45deg);
+  border: 2px solid var(--papel);
+}
+.pano .c.luz {
+  background: rgba(255, 178, 31, 0.45);
+}
+.pano .c.gano {
+  animation: casilla-gana 0.9s ease-in-out 3;
+}
+@keyframes casilla-gana {
+  50% {
+    background: var(--oro);
+  }
+}
+.pano .h {
+  position: absolute;
+  z-index: 4;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.pano .h:hover,
+.pano .h.activo {
+  background: rgba(255, 178, 31, 0.5);
+}
+.pano .puestas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.pano .puestas .ficha-casino {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  --d: 25px;
+  font-size: 9px;
+  border-width: 1.5px;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.55);
+}
+.pano.cerrado {
+  filter: saturate(0.6) brightness(0.8);
+}
+.pano.cerrado .c,
+.pano.cerrado .h {
+  cursor: not-allowed;
+}
+
+.anunciadas {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0.2rem 0 0.1rem;
+}
+.anunciadas::-webkit-scrollbar {
+  display: none;
+}
+.anunciadas button {
+  flex: none;
+}
+.anunciadas button[aria-pressed='true'] {
+  --fondo: var(--oro);
+}
+
+/* ---------- Estado de ronda ---------- */
+.ronda-estado {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 600;
+  min-height: 2.2rem;
+}
+.ronda-estado .reloj {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: 1.25rem;
+  color: var(--oro);
+  min-width: 2.6ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.ronda-estado .etiqueta-fase {
+  flex: 1;
+}
+.historial-numeros {
+  display: flex;
+  gap: 4px;
+  overflow: hidden;
+}
+.historial-numeros span {
+  flex: none;
+  min-width: 2.1em;
+  padding: 0.15em 0.3em;
+  border-radius: 6px;
+  text-align: center;
+  font-family: var(--f-display);
+  color: var(--papel);
+  border: 1.5px solid rgba(0, 0, 0, 0.35);
+}
+.historial-numeros .rojo {
+  background: var(--ruleta-rojo);
+}
+.historial-numeros .negro {
+  background: var(--ruleta-negro);
+}
+.historial-numeros .verde {
+  background: var(--ruleta-verde);
+}
+.historial-numeros span:first-child {
+  outline: 2px solid var(--oro);
+}
+
+/* ---------- Resultado grande ---------- */
+.numero-grande {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.2em;
+  height: 2.2em;
+  border-radius: 50%;
+  font-family: var(--f-display);
+  color: var(--papel);
+  border: 4px solid var(--tinta);
+  box-shadow: 4px 4px 0 var(--muro-sombra);
+}
+.numero-grande.rojo {
+  background: var(--ruleta-rojo);
+}
+.numero-grande.negro {
+  background: var(--ruleta-negro);
+}
+.numero-grande.verde {
+  background: var(--ruleta-verde);
+}
+.numero-grande.salta {
+  animation: salta 0.6s cubic-bezier(0.2, 1.6, 0.5, 1);
+}
+@keyframes salta {
+  from {
+    transform: scale(0.2);
+  }
+}
+
+/* ---------- Cartones de videobingo ---------- */
+.carton {
+  --cel: 32px;
+  position: relative;
+  background: var(--papel);
+  border: 2.5px solid var(--tinta);
+  border-radius: 10px;
+  padding: 4px;
+  color: var(--tinta);
+  box-shadow: 3px 3px 0 var(--muro-sombra);
+}
+.carton.apagado {
+  opacity: 0.45;
+  filter: grayscale(0.8);
+}
+.carton .rejilla {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 3px;
+}
+.carton .n {
+  position: relative;
+  aspect-ratio: 1.15;
+  display: grid;
+  place-items: center;
+  font-family: var(--f-display);
+  font-size: clamp(11px, calc(var(--cel) * 0.48), 26px);
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px rgba(26, 20, 35, 0.2);
+}
+.carton .n.marcada {
+  background: var(--rosa);
+  color: #fff;
+}
+.carton .n.marcada.extra {
+  background: var(--oro);
+  color: var(--tinta);
+}
+.carton .n.figura {
+  box-shadow: inset 0 0 0 3px var(--oro), 0 0 0 1px var(--tinta);
+}
+.carton .n.falta {
+  background: #fff;
+  box-shadow: inset 0 0 0 3px var(--nopal);
+  animation: late 1s ease-in-out infinite;
+}
+@keyframes late {
+  50% {
+    box-shadow: inset 0 0 0 3px var(--nopal), 0 0 0 3px rgba(12, 138, 85, 0.4);
+  }
+}
+.carton .pie {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 2px 0;
+  min-height: 1.3em;
+}
+.carton .pie .premio {
+  color: var(--nopal);
+}
+.bola {
+  --d: 54px;
+  width: var(--d);
+  height: var(--d);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--f-display);
+  font-size: calc(var(--d) * 0.4);
+  color: var(--tinta);
+  background: radial-gradient(circle at 35% 30%, #fff 0 18%, transparent 19%), radial-gradient(circle, #fff 0 42%, var(--c, var(--rosa)) 43%);
+  border: 2px solid var(--tinta);
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.4);
+  flex: none;
+}
+.bola.sale {
+  animation: bola-sale 0.45s cubic-bezier(0.2, 1.5, 0.5, 1);
+}
+@keyframes bola-sale {
+  from {
+    transform: translateY(-80%) scale(0.4);
+    opacity: 0;
+  }
+}
+.patron-mini {
+  display: grid;
+  grid-template-columns: repeat(5, 7px);
+  gap: 2px;
+}
+.patron-mini i {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: rgba(26, 20, 35, 0.15);
+}
+.patron-mini i.si {
+  background: var(--rosa);
+}
+.tabla-pagos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 0.5rem;
+}
+.tabla-pagos > div {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  background: #fff;
+  border: 2px solid var(--tinta);
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.85rem;
+}
+.tabla-pagos b {
+  font-family: var(--f-display);
+  font-weight: 400;
+}
+.tabla-pagos .gana {
+  background: var(--oro);
+}
+
+/* ---------- Saldo y tarjetas de jugador ---------- */
+.chip-jugador {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.7rem 0.35rem 0.4rem;
+  border-radius: 999px;
+  background: var(--papel);
+  color: var(--tinta);
+  border: 2px solid var(--tinta);
+  box-shadow: 2px 2px 0 var(--muro-sombra);
+  font-weight: 600;
+  min-width: 0;
+}
+.chip-jugador .av {
+  font-size: 1.35em;
+  line-height: 1;
+}
+.chip-jugador .nom {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chip-jugador .dinero {
+  margin-left: auto;
+  font-weight: 400;
+}
+.chip-jugador.desconectado {
+  opacity: 0.5;
+}
+.chip-jugador.entra {
+  animation: entra 0.4s cubic-bezier(0.2, 1.5, 0.5, 1);
+}
+
+.ranking {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+  counter-reset: pos;
+}
+.ranking li {
+  counter-increment: pos;
+  display: grid;
+  grid-template-columns: 1.6em 1.6em minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 10px;
+  background: rgba(251, 243, 222, 0.08);
+  border: 1.5px solid rgba(251, 243, 222, 0.15);
+  font-weight: 600;
+}
+.ranking li::before {
+  content: counter(pos);
+  font-family: var(--f-display);
+  font-weight: 400;
+  color: var(--texto-suave);
+}
+.ranking li:first-child::before {
+  color: var(--oro);
+}
+.ranking .nom {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ranking .dinero {
+  font-weight: 400;
+}
+
+.feed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.92rem;
+}
+.feed li {
+  padding: 0.35rem 0.6rem;
+  border-left: 3px solid var(--oro);
+  background: rgba(13, 18, 48, 0.35);
+  border-radius: 0 8px 8px 0;
+}
+.feed li.nuevo {
+  animation: feed-entra 0.5s ease-out;
+}
+@keyframes feed-entra {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+}
+
+/* ---------- Mesa de blackjack ---------- */
+.zona-apuesta {
+  all: unset;
+  box-sizing: border-box;
+  position: relative;
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  width: var(--d, 92px);
+  height: var(--d, 92px);
+  border-radius: 50%;
+  border: 2.5px dashed var(--pano-linea);
+  color: var(--papel);
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.zona-apuesta.principal {
+  --d: 112px;
+  border-style: solid;
+  border-width: 3px;
+}
+.zona-apuesta:focus-visible {
+  outline: 3px solid var(--oro);
+}
+.zona-apuesta .dinero {
+  font-size: 1.05rem;
+  color: var(--oro);
+}
+.zona-apuesta:disabled,
+.zona-apuesta[aria-disabled='true'] {
+  cursor: default;
+  opacity: 0.7;
+}
+.etiqueta-mano {
+  display: inline-block;
+  padding: 0.1em 0.55em;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  background: var(--papel);
+  color: var(--tinta);
+  border: 2px solid var(--tinta);
+}
+.etiqueta-mano.gana,
+.etiqueta-mano.blackjack {
+  background: var(--oro);
+}
+.etiqueta-mano.pierde {
+  background: #3b2a3f;
+  color: #f0c9c9;
+  border-color: #1a1423;
+}
+.etiqueta-mano.empate {
+  background: #d9d3c2;
+}
+
+/* ---------- Selector de juegos ---------- */
+.juegos-rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 0.8rem;
+}
+.juego-tile {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 0.25rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  background: var(--papel);
+  color: var(--tinta);
+  border: 3px solid var(--tinta);
+  box-shadow: 4px 4px 0 var(--muro-sombra);
+  transition: transform 0.08s;
+}
+.juego-tile:hover {
+  transform: translate(-1px, -1px);
+}
+.juego-tile:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--muro-sombra);
+}
+.juego-tile:focus-visible {
+  outline: 3px solid var(--oro);
+  outline-offset: 3px;
+}
+.juego-tile .icono {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+}
+.juego-tile .icono .carta {
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+.juego-tile b {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: 1.15rem;
+  line-height: 1.1;
+}
+.juego-tile span {
+  font-size: 0.86rem;
+  color: #5d5466;
+}
+.juego-tile[aria-current='true'] {
+  background: var(--oro);
+}
+
+/* ---------- Podio ---------- */
+.podio {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  gap: 1rem;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+}
+.podio .lugar {
+  display: grid;
+  justify-items: center;
+  gap: 0.4rem;
+  text-align: center;
+}
+.podio .av {
+  font-size: clamp(2.6rem, 6vw, 4.6rem);
+  line-height: 1;
+}
+.podio .nom {
+  font-family: var(--f-display);
+  font-size: clamp(1.1rem, 2.4vw, 1.9rem);
+}
+.podio .bloque {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  background: var(--papel);
+  color: var(--tinta);
+  border: 3px solid var(--tinta);
+  border-radius: 12px 12px 0 0;
+  box-shadow: 5px 5px 0 var(--muro-sombra);
+  font-family: var(--f-display);
+  font-size: clamp(2rem, 5vw, 4rem);
+}
+.podio .l1 .bloque {
+  height: 220px;
+  background: var(--oro);
+}
+.podio .l2 .bloque {
+  height: 160px;
+}
+.podio .l3 .bloque {
+  height: 120px;
+  background: #e8c9a8;
+}
+.podio .lugar {
+  animation: sube-podio 0.7s cubic-bezier(0.2, 1.3, 0.5, 1) both;
+}
+.podio .l3 {
+  animation-delay: 0.2s;
+}
+.podio .l2 {
+  animation-delay: 0.6s;
+}
+.podio .l1 {
+  animation-delay: 1.1s;
+}
+@keyframes sube-podio {
+  from {
+    transform: translateY(60px);
+    opacity: 0;
+  }
+}
+
+.demo-sello {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.1em 0.5em;
+  border-radius: 999px;
+  border: 1.5px solid currentColor;
+  opacity: 0.85;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .naipe.entra,
+  .bola.sale,
+  .ficha-casino.puesta,
+  .podio .lugar {
+    animation: none;
+  }
+}

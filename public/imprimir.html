@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#232c6e">
+<title>Imprimir · Lotería en Vivo</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎴</text></svg>">
+<link rel="stylesheet" href="/css/estilo.css">
+<style>
+  .pagina { max-width: 1240px; margin: 0 auto; padding: clamp(1rem, 3vw, 2rem); padding-bottom: 4rem; }
+  .barra { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.6rem; }
+  .barra h1 { margin: 0; }
+  .intro { color: var(--texto-suave); max-width: 62ch; margin-bottom: 1.4rem; }
+  .pestanas { display: inline-flex; gap: 0; margin-bottom: 1.2rem; border: 3px solid var(--tinta); border-radius: 12px; overflow: hidden; box-shadow: var(--golpe); }
+  .pestanas label { position: relative; }
+  .pestanas input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .pestanas span { display: block; padding: 0.7em 1.4em; background: var(--papel); color: var(--tinta); font-weight: 700; font-size: 1.05rem; cursor: pointer; }
+  .pestanas label + label span { border-left: 3px solid var(--tinta); }
+  .pestanas input:checked + span { background: var(--rosa); color: #fff; }
+  .pestanas input:focus-visible + span { outline: 3px solid var(--cempa); outline-offset: -6px; }
+  .rejilla { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 1.6rem; align-items: start; }
+  .grupo { border: 0; padding: 0; margin: 0 0 1.15rem; }
+  .grupo legend { font-weight: 700; margin-bottom: 0.5rem; padding: 0; }
+  .grupo small { display: block; color: #5d5466; margin-top: 0.35rem; font-size: 0.86rem; }
+  .fila { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
+  .fila input[type=number] { width: 6.5rem; }
+  details { margin-top: 0.4rem; }
+  summary { cursor: pointer; font-weight: 600; }
+  .vista { position: sticky; top: 1rem; display: grid; gap: 1rem; }
+  .hojas { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+  .hojas figure { margin: 0; }
+  .hojas canvas { width: 100%; height: auto; display: block; background: #fff; border-radius: 4px; box-shadow: 5px 5px 0 var(--muro-sombra); }
+  .hojas figcaption { margin-top: 0.5rem; color: var(--texto-suave); font-size: 0.92rem; }
+  .navegar { display: flex; align-items: center; gap: 0.8rem; justify-content: center; color: var(--texto-suave); }
+  .resumen { font-size: 1.05rem; }
+  .progreso { height: 10px; border-radius: 99px; background: rgba(251, 243, 222, 0.18); overflow: hidden; }
+  .progreso i { display: block; height: 100%; width: 0; background: var(--cempa); transition: width 0.2s; }
+  .consejos { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.45rem; }
+  @media (max-width: 900px) {
+    .rejilla { grid-template-columns: 1fr; }
+    .vista { position: static; order: -1; }
+  }
+</style>
+</head>
+<body>
+<main class="pagina">
+  <div class="barra">
+    <h1>Imprimir</h1>
+    <div class="fila-botones">
+      <a class="btn btn-fantasma" href="/">Inicio</a>
+      <a class="btn btn-fantasma" href="/baraja">Editar la baraja</a>
+      <a class="btn btn-fantasma" href="/anfitrion">Ir a mi sala</a>
+    </div>
+  </div>
+  <p class="intro" id="intro">Descarga un PDF listo para imprimir con la baraja que guardaste en este navegador: las cartas con su reverso alineado para doble cara, o tablas para jugar en papel.</p>
+
+  <div class="pestanas" role="radiogroup" aria-label="Qué quieres imprimir">
+    <label><input type="radio" name="que" value="baraja" checked><span>La baraja</span></label>
+    <label><input type="radio" name="que" value="tablas"><span>Tablas</span></label>
+  </div>
+
+  <div class="rejilla">
+    <form class="hoja" id="opciones" onsubmit="return false">
+      <fieldset class="grupo">
+        <legend>Tamaño de papel</legend>
+        <div class="opciones">
+          <label class="opcion"><input type="radio" name="papel" value="carta" checked><span>Carta</span></label>
+          <label class="opcion"><input type="radio" name="papel" value="a4"><span>A4</span></label>
+        </div>
+      </fieldset>
+
+      <!-- Baraja -->
+      <div data-para="baraja">
+        <fieldset class="grupo">
+          <legend>Tamaño de cada carta</legend>
+          <div class="opciones">
+            <label class="opcion"><input type="radio" name="tam" value="chica" checked><span>Chica, 5.6 × 8.5 cm</span></label>
+            <label class="opcion"><input type="radio" name="tam" value="mediana"><span>Mediana, 6.3 × 9.6 cm</span></label>
+            <label class="opcion"><input type="radio" name="tam" value="grande"><span>Grande, 8.6 × 13.1 cm</span></label>
+          </div>
+          <small id="info-tam"></small>
+        </fieldset>
+        <fieldset class="grupo">
+          <legend>Qué caras imprimir</legend>
+          <div class="opciones">
+            <label class="opcion"><input type="radio" name="modo" value="doble" checked><span>Frente y reverso</span></label>
+            <label class="opcion"><input type="radio" name="modo" value="frentes"><span>Solo frentes</span></label>
+            <label class="opcion"><input type="radio" name="modo" value="reversos"><span>Solo reversos</span></label>
+          </div>
+          <small>“Frente y reverso” intercala las hojas: la 1 es el frente, la 2 su reverso, y así.</small>
+        </fieldset>
+      </div>
+
+      <!-- Tablas -->
+      <div data-para="tablas" hidden>
+        <fieldset class="grupo">
+          <legend>Cuántas tablas</legend>
+          <div class="fila">
+            <input type="number" name="cantidad" min="1" max="100" value="12" aria-label="Cantidad de tablas">
+            <button class="btn btn-chico" type="button" id="btn-otras">Otras combinaciones</button>
+          </div>
+          <small>Todas son distintas y cada figura sale un número parecido de veces.</small>
+        </fieldset>
+        <fieldset class="grupo">
+          <legend>Tamaño de tabla</legend>
+          <div class="opciones">
+            <label class="opcion"><input type="radio" name="n" value="3"><span>3 × 3</span></label>
+            <label class="opcion"><input type="radio" name="n" value="4" checked><span>4 × 4</span></label>
+            <label class="opcion"><input type="radio" name="n" value="5"><span>5 × 5</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="grupo">
+          <legend>Tablas por hoja</legend>
+          <div class="opciones">
+            <label class="opcion"><input type="radio" name="porHoja" value="1"><span>1, grande</span></label>
+            <label class="opcion"><input type="radio" name="porHoja" value="2" checked><span>2, hoja horizontal</span></label>
+            <label class="opcion"><input type="radio" name="porHoja" value="4"><span>4, chicas</span></label>
+          </div>
+          <small id="info-tabla"></small>
+        </fieldset>
+        <div class="grupo">
+          <label class="interruptor"><input type="checkbox" name="numerar" checked> Numerar las tablas</label>
+          <label class="interruptor"><input type="checkbox" name="reversoTablas"> Imprimir también el reverso de las tablas</label>
+        </div>
+      </div>
+
+      <fieldset class="grupo" id="grupo-borde">
+        <legend>Tu impresora voltea la hoja por</legend>
+        <div class="opciones">
+          <label class="opcion"><input type="radio" name="borde" value="largo" checked><span>El lado largo</span></label>
+          <label class="opcion"><input type="radio" name="borde" value="corto"><span>El lado corto</span></label>
+        </div>
+        <small>Elige lo mismo en el diálogo de impresión. Casi todas las impresoras usan el lado largo.</small>
+        <details>
+          <summary>Ajuste fino del reverso</summary>
+          <p class="suave" style="margin:.5rem 0">Si en la hoja de prueba el reverso queda corrido, muévelo aquí. Positivo es a la derecha y hacia abajo.</p>
+          <div class="fila">
+            <label class="campo" style="margin:0"><span>Horizontal (mm)</span><input type="number" name="ajusteX" min="-10" max="10" step="0.5" value="0"></label>
+            <label class="campo" style="margin:0"><span>Vertical (mm)</span><input type="number" name="ajusteY" min="-10" max="10" step="0.5" value="0"></label>
+          </div>
+        </details>
+      </fieldset>
+      <div class="grupo" style="margin-bottom:0">
+        <label class="interruptor"><input type="checkbox" name="guias" checked> Marcas de corte</label>
+      </div>
+    </form>
+
+    <section class="vista" aria-label="Vista previa">
+      <div class="hojas">
+        <figure><canvas id="vista-frente" aria-label="Vista previa del frente"></canvas><figcaption id="cap-frente">Frente</figcaption></figure>
+        <figure id="fig-reverso"><canvas id="vista-reverso" aria-label="Vista previa del reverso"></canvas><figcaption id="cap-reverso">Reverso</figcaption></figure>
+      </div>
+      <div class="navegar">
+        <button class="btn btn-chico btn-fantasma" type="button" id="hoja-ant" aria-label="Hoja anterior">‹</button>
+        <span id="hoja-num"></span>
+        <button class="btn btn-chico btn-fantasma" type="button" id="hoja-sig" aria-label="Hoja siguiente">›</button>
+      </div>
+      <p class="resumen" id="resumen"></p>
+      <button class="btn btn-rosa btn-grande" id="btn-descargar">Descargar PDF</button>
+      <div class="progreso" id="progreso" hidden><i></i></div>
+      <p class="suave" id="estado" role="status"></p>
+      <div class="hoja">
+        <h3>Para que salga bien</h3>
+        <ul class="consejos">
+          <li>Imprime a <b>tamaño real (100 %)</b>, sin “ajustar a la página”.</li>
+          <li>Para doble cara elige “imprimir en ambos lados” y el mismo lado de volteo que aquí.</li>
+          <li>Si tu impresora no imprime a doble cara: imprime solo las páginas impares, voltea el bloque de hojas, vuelve a meterlo y manda las pares.</li>
+          <li>Imprime primero una hoja de prueba y revísala a contraluz.</li>
+          <li>Para cartas que aguanten, usa cartulina opalina de 180 a 250 g.</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</main>
+<script type="module" src="/js/imprimir.js"></script>
+</body>
+</html>

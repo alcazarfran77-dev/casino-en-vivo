@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#232c6e">
+<title>Tu baraja · Lotería en Vivo</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎴</text></svg>">
+<link rel="stylesheet" href="/css/estilo.css">
+<style>
+  .pagina { max-width: 1240px; margin: 0 auto; padding: clamp(1rem, 3vw, 2rem); padding-bottom: 5rem; }
+  .barra { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.4rem; }
+  .barra h1 { margin: 0; }
+  .resumen { display: flex; flex-wrap: wrap; gap: 1rem 1.6rem; align-items: end; margin-bottom: 1rem; }
+  .resumen .campo { margin: 0; min-width: min(100%, 320px); }
+  .acciones { margin: 1rem 0 1.6rem; }
+  .arriba { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.4rem; margin-bottom: 2rem; }
+  .bloque { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 1.2rem; align-items: start; }
+  .bloque-ancho { grid-template-columns: minmax(0, 1fr); }
+  .colores { display: flex; gap: 0.6rem; align-items: center; }
+  .rejilla-cartas { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 1rem; }
+  .rejilla-cartas button { all: unset; cursor: pointer; display: grid; gap: 0.35rem; border-radius: 10px; position: relative; }
+  .rejilla-cartas button:focus-visible { outline: 3px solid var(--cempa); outline-offset: 4px; }
+  .rejilla-cartas button:hover .carta { transform: translateY(-3px); }
+  .rejilla-cartas .carta { transition: transform 0.15s; }
+  .marcas-carta { position: absolute; top: -6px; right: -6px; display: flex; gap: 3px; z-index: 3; }
+  .marcas-carta span { background: var(--cempa); color: var(--tinta); border: 2px solid var(--tinta); border-radius: 99px; font-size: 0.72rem; font-weight: 700; padding: 0 0.45em; }
+  .agregar { aspect-ratio: 5/7.6; border: 3px dashed rgba(251,243,222,.5); border-radius: 12px; display: grid; place-items: center; text-align: center; color: var(--texto-suave); font-weight: 600; padding: 1rem; }
+  .editar { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 1.4rem; }
+  .grabando { animation: latido 1s infinite; }
+  @keyframes latido { 50% { filter: brightness(1.3); } }
+  .muestra-tabla { max-width: 360px; }
+  .radio-linea { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-bottom: .8rem; cursor: pointer; }
+  .radio-linea input[type=radio], .radio-linea input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--rosa); flex: none; }
+  @media (max-width: 860px) {
+    .arriba { grid-template-columns: 1fr; }
+    .editar { grid-template-columns: 1fr; }
+    .editar .vista { max-width: 180px; margin: 0 auto; }
+    .bloque { grid-template-columns: 110px minmax(0, 1fr); }
+  }
+</style>
+</head>
+<body>
+<main class="pagina">
+  <div class="barra">
+    <h1>Tu baraja</h1>
+    <div class="fila-botones">
+      <a class="btn btn-fantasma" href="/">Inicio</a>
+      <a class="btn btn-cempa" href="/imprimir">Imprimir</a>
+      <a class="btn btn-rosa" href="/anfitrion" id="ir-sala">Abrir sala con esta baraja</a>
+    </div>
+  </div>
+
+  <div class="resumen">
+    <label class="campo"><span>Nombre de la baraja</span><input type="text" id="nombre-baraja" maxlength="60"></label>
+    <p id="conteo" class="suave" style="margin:0 0 .6rem"></p>
+  </div>
+  <div class="fila-botones acciones">
+    <label class="btn btn-cempa">Subir varias imágenes<input type="file" id="lote" accept="image/*" multiple hidden></label>
+    <button class="btn" id="btn-agregar">Agregar carta</button>
+    <button class="btn btn-fantasma" id="btn-exportar">Exportar</button>
+    <label class="btn btn-fantasma">Importar<input type="file" id="importar" accept="application/json,.json" hidden></label>
+    <button class="btn btn-fantasma" id="btn-restaurar">Restaurar la tradicional</button>
+  </div>
+
+  <section class="arriba">
+    <div class="hoja">
+      <h2>Reverso del mazo</h2>
+      <p class="suave">Es lo que se ve arriba del montón antes de voltear cada carta.</p>
+      <div class="bloque">
+        <div id="vista-reverso"></div>
+        <div>
+          <label class="campo"><span>Texto</span><input type="text" id="rev-texto" maxlength="24"></label>
+          <div class="campo"><span class="campo-titulo">Colores</span>
+            <div class="colores"><input type="color" id="rev-c1" aria-label="Color 1"><input type="color" id="rev-c2" aria-label="Color 2"></div>
+          </div>
+          <div class="fila-botones">
+            <label class="btn btn-chico">Usar una imagen<input type="file" id="rev-img" accept="image/*" hidden></label>
+            <button class="btn btn-chico btn-fantasma" id="rev-quitar">Quitar imagen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hoja">
+      <h2>Encabezado de las tablas</h2>
+      <p class="suave">La franja de arriba de cada tabla. Pon el nombre de tu evento o un logo.</p>
+      <div class="bloque bloque-ancho">
+        <div id="vista-encabezado" class="muestra-tabla"></div>
+        <div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+            <label class="campo"><span>Título</span><input type="text" id="enc-texto" maxlength="24"></label>
+            <label class="campo"><span>Subtítulo</span><input type="text" id="enc-sub" maxlength="48" placeholder="Posada 2026"></label>
+          </div>
+          <div class="fila-botones">
+            <input type="color" id="enc-color" aria-label="Color del encabezado">
+            <label class="btn btn-chico">Subir logo<input type="file" id="enc-img" accept="image/*" hidden></label>
+            <button class="btn btn-chico btn-fantasma" id="enc-quitar">Quitar logo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="barra">
+    <h2 style="margin:0">Cartas</h2>
+    <div class="opciones" role="radiogroup" aria-label="Cómo se muestran las imágenes propias">
+      <label class="opcion"><input type="radio" name="estilo" value="arte"><span>Imagen dentro del marco</span></label>
+      <label class="opcion"><input type="radio" name="estilo" value="completa"><span>Imagen a carta completa</span></label>
+    </div>
+  </div>
+  <p class="suave" style="margin-top:-.6rem">Toca una carta para cambiar su imagen, nombre, verso o grabar tu voz. Usa “carta completa” si tus imágenes ya traen marco y nombre.</p>
+  <div class="rejilla-cartas" id="rejilla"></div>
+</main>
+
+<dialog id="dlg-carta" aria-labelledby="dlg-carta-titulo">
+  <form method="dialog">
+    <div class="dialogo-cuerpo">
+      <h2 id="dlg-carta-titulo">Carta</h2>
+      <div class="editar">
+        <div class="vista" id="dlg-vista"></div>
+        <div>
+          <label class="campo"><span>Nombre</span><input type="text" id="c-nombre" maxlength="40"></label>
+          <label class="campo"><span>Verso del gritón</span><textarea id="c-verso" maxlength="160" rows="2"></textarea><small>Se dice antes del nombre si activas “cantar con verso”.</small></label>
+          <div class="campo"><span class="campo-titulo">Imagen</span>
+            <div class="fila-botones">
+              <label class="btn btn-chico btn-cempa">Subir imagen<input type="file" id="c-img" accept="image/*" hidden></label>
+              <label class="btn btn-chico">Tomar foto<input type="file" id="c-foto" accept="image/*" capture="environment" hidden></label>
+              <button class="btn btn-chico btn-fantasma" type="button" id="c-quitar-img">Quitar imagen</button>
+            </div>
+          </div>
+          <div class="campo" id="c-color-campo"><span class="campo-titulo">Color de fondo</span>
+            <div class="fila-botones"><input type="color" id="c-color" aria-label="Color de fondo"><input type="text" id="c-arte" maxlength="8" style="width:7rem" aria-label="Emoji de la figura" placeholder="Emoji"></div>
+          </div>
+          <div class="campo"><span class="campo-titulo">Tu voz para esta carta</span>
+            <div class="fila-botones">
+              <button class="btn btn-chico btn-rosa" type="button" id="c-grabar">Grabar</button>
+              <label class="btn btn-chico">Subir audio<input type="file" id="c-audio" accept="audio/*" hidden></label>
+              <button class="btn btn-chico btn-fantasma" type="button" id="c-escuchar">Escuchar</button>
+              <button class="btn btn-chico btn-fantasma" type="button" id="c-quitar-audio">Quitar</button>
+            </div>
+            <small id="c-audio-estado"></small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dialogo-pie">
+      <button class="btn btn-fantasma" type="button" id="c-eliminar" style="margin-right:auto">Eliminar carta</button>
+      <button class="btn btn-nopal" value="ok">Listo</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg-lote" aria-labelledby="dlg-lote-titulo">
+  <form method="dialog">
+    <div class="dialogo-cuerpo">
+      <h2 id="dlg-lote-titulo">Llegaron imágenes</h2>
+      <p id="lote-info"></p>
+      <div class="campo">
+        <label class="radio-linea"><input type="radio" name="lote-modo" value="reemplazar" checked> Reemplazar cartas empezando en la número <input type="number" id="lote-desde" min="1" value="1" style="width:5.5rem;min-height:38px"></label>
+        <label class="radio-linea" style="margin-left:2.2rem;font-size:.95rem"><input type="checkbox" id="lote-nombres"> Cambiar también el nombre de cada carta por el del archivo</label>
+        <label class="radio-linea"><input type="radio" name="lote-modo" value="agregar"> Agregarlas como cartas nuevas al final</label>
+        <label class="radio-linea"><input type="radio" name="lote-modo" value="nueva"> Crear una baraja nueva solo con estas imágenes</label>
+      </div>
+      <p class="suave">Las cartas nuevas toman el nombre del archivo: “07_la-escalera.jpg” queda como “La escalera”. Después puedes corregir cualquier nombre tocando la carta.</p>
+    </div>
+    <div class="dialogo-pie">
+      <button class="btn btn-fantasma" value="cancelar">Cancelar</button>
+      <button class="btn btn-nopal" value="ok">Aplicar</button>
+    </div>
+  </form>
+</dialog>
+
+<script type="module" src="/js/editor.js"></script>
+</body>
+</html>

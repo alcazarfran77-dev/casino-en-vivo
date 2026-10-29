@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#232c6e">
+<title>Casino en Vivo</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎰</text></svg>">
+<link rel="stylesheet" href="/css/estilo.css">
+<link rel="stylesheet" href="/css/casino.css">
+<style>
+  .portada { min-height: 100dvh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: clamp(1.5rem, 5vw, 5rem); padding: clamp(1.25rem, 5vw, 4rem); max-width: 1180px; margin: 0 auto; }
+  .marca { font-family: var(--f-display); font-size: clamp(3rem, 8.4vw, 6rem); line-height: 0.92; margin: 0 0 0.3em; color: var(--papel); text-shadow: 5px 5px 0 var(--muro-sombra); }
+  .marca span { display: block; color: var(--oro); font-size: 0.5em; margin-top: 0.15em; }
+  .lema { font-size: clamp(1.05rem, 2.1vw, 1.25rem); max-width: 34ch; color: var(--texto-suave); margin-bottom: 1.6rem; }
+  .unirse { max-width: 440px; }
+  .unirse label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+  .unirse-fila { display: flex; gap: 0.6rem; }
+  .unirse-fila input { flex: 1; font-family: var(--f-display); font-size: 1.7rem; letter-spacing: 0.18em; text-align: center; min-height: 60px; }
+  .crear { margin-top: 1.4rem; display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: center; }
+  .mesa-deco { position: relative; height: min(60vh, 500px); border-radius: 50% 50% 18px 18px / 30% 30% 18px 18px; background: radial-gradient(120% 90% at 50% 20%, var(--pano-claro), var(--pano) 55%, var(--pano-hondo)); border: 4px solid var(--tinta); box-shadow: 8px 8px 0 var(--muro-sombra), inset 0 0 0 10px #5a3418, inset 0 0 0 13px var(--tinta); overflow: hidden; }
+  .mesa-deco > * { position: absolute; }
+  .mesa-deco .lot { width: 27%; left: 9%; top: 18%; transform: rotate(-9deg); filter: drop-shadow(5px 6px 0 rgba(0,0,0,.35)); }
+  .mesa-deco .n1 { left: 40%; top: 22%; transform: rotate(6deg); --w: clamp(70px, 9vw, 104px) !important; }
+  .mesa-deco .n2 { left: 54%; top: 26%; transform: rotate(16deg); --w: clamp(70px, 9vw, 104px) !important; }
+  .mesa-deco .bola { right: 9%; top: 16%; --d: clamp(56px, 7vw, 84px); }
+  .mesa-deco .pila { left: 22%; bottom: 10%; display: flex; gap: 6px; }
+  .mesa-deco .pila .ficha-casino { --d: clamp(40px, 5vw, 58px); }
+  .mesa-deco .num { right: 12%; bottom: 14%; font-size: clamp(1.4rem, 2.6vw, 2.2rem); }
+  .como { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; color: var(--texto-suave); border-top: 2px solid rgba(251, 243, 222, 0.18); padding-top: 1.3rem; }
+  .como b { display: block; color: var(--papel); font-size: 1.05rem; margin-bottom: 0.2rem; }
+  .pie-demo { grid-column: 1 / -1; color: var(--texto-suave); font-size: 0.88rem; margin: 0; }
+  @media (max-width: 820px) {
+    .portada { grid-template-columns: 1fr; align-content: start; }
+    .mesa-deco { order: -1; height: 230px; }
+    .como { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main class="portada">
+  <section>
+    <h1 class="marca">Casino<span>en vivo</span></h1>
+    <p class="lema">Ruleta, blackjack, videobingo y lotería en la pantalla grande. Cada quien apuesta desde su celular con $1,000 ficticios.</p>
+    <form class="unirse" id="form-unirse" autocomplete="off">
+      <label for="codigo">Código de la sala</label>
+      <div class="unirse-fila">
+        <input id="codigo" type="tel" inputmode="numeric" pattern="[0-9 ]*" maxlength="7" placeholder="000 000" aria-describedby="error-codigo" required>
+        <button class="btn btn-rosa btn-grande" type="submit">Entrar</button>
+      </div>
+      <p id="error-codigo" class="suave" role="alert" style="min-height:1.5em;margin-top:.5rem"></p>
+    </form>
+    <div class="crear">
+      <a class="btn btn-cempa" href="/anfitrion">Abrir un casino</a>
+      <a class="btn btn-fantasma" href="/baraja">Baraja de lotería</a>
+      <a class="btn btn-fantasma" href="/imprimir">Imprimir tablas</a>
+    </div>
+  </section>
+  <div class="mesa-deco" id="deco" aria-hidden="true"></div>
+  <section class="como" aria-label="Cómo se juega">
+    <div><b>Abre el casino</b>En la compu o la tele. Aparecen un código y un QR.</div>
+    <div><b>Regístrate con el celular</b>Escanea el QR, escribe tu nombre y recibe $1,000 ficticios.</div>
+    <div><b>Apuesta en la mesa</b>El anfitrión elige el juego y todos juegan a la vez, o cada quien por su cuenta.</div>
+  </section>
+  <p class="pie-demo">Modo demo: el dinero es ficticio, no se puede depositar ni retirar y no tiene valor real.</p>
+</main>
+<script type="module">
+  import { cartaEl, $, el } from '/js/comun.js';
+  import { CARTAS_TRADICIONALES } from '/js/shared/baraja.js';
+  import { naipeEl, fichaCasinoEl } from '/js/casino-comun.js';
+  import { bolaEl } from '/js/componentes/bingo.js';
+
+  const deco = $('#deco');
+  const lot = el('div', { class: 'lot' }, cartaEl(CARTAS_TRADICIONALES[0], { numero: 1, indice: 0 }));
+  const n1 = naipeEl('AS');
+  n1.classList.add('n1');
+  const n2 = naipeEl('KH');
+  n2.classList.add('n2');
+  const pila = el('div', { class: 'pila' }, fichaCasinoEl(10000), fichaCasinoEl(2500), fichaCasinoEl(500), fichaCasinoEl(100));
+  const num = el('span', { class: 'numero-grande rojo num' }, '17');
+  num.classList.replace('rojo', 'negro');
+  deco.append(lot, n1, n2, bolaEl(23), pila, num);
+
+  const input = $('#codigo');
+  input.addEventListener('input', () => {
+    const d = input.value.replace(/\D/g, '').slice(0, 6);
+    input.value = d.length > 3 ? d.slice(0, 3) + ' ' + d.slice(3) : d;
+  });
+  $('#form-unirse').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const c = input.value.replace(/\D/g, '');
+    const err = $('#error-codigo');
+    if (c.length !== 6) { err.textContent = 'El código tiene 6 números.'; return; }
+    const r = await fetch('/api/sala/' + c).then((x) => x.json()).catch(() => ({ ok: false, error: 'Sin conexión con el servidor.' }));
+    if (!r.ok) { err.textContent = r.error || 'No existe una sala con ese código.'; return; }
+    location.href = '/jugar?c=' + c;
+  });
+</script>
+</body>
+</html>

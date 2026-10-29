@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#232c6e">
+<title>Anfitrión · Casino en Vivo</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎰</text></svg>">
+<link rel="stylesheet" href="/css/estilo.css">
+<link rel="stylesheet" href="/css/casino.css">
+<link rel="stylesheet" href="/css/tv.css">
+</head>
+<body>
+<!-- Abrir el casino -->
+<main class="preparar" id="v-preparar" hidden>
+  <div class="barra">
+    <h1>Abre tu casino</h1>
+    <a class="btn btn-fantasma" href="/">Inicio</a>
+  </div>
+  <div class="preparar-rejilla">
+    <form class="hoja" id="form-casino" onsubmit="return false" aria-label="Reglas del casino">
+      <fieldset class="grupo">
+        <legend>Si alguien se queda sin saldo</legend>
+        <div class="opciones">
+          <label class="opcion"><input type="radio" name="recargas" value="0"><span>No puede recargar</span></label>
+          <label class="opcion"><input type="radio" name="recargas" value="1" checked><span>1 recarga</span></label>
+          <label class="opcion"><input type="radio" name="recargas" value="3"><span>3 recargas</span></label>
+          <label class="opcion"><input type="radio" name="recargas" value="99"><span>Sin límite</span></label>
+        </div>
+        <small>Cada recarga vuelve a dar $1,000 ficticios cuando el saldo baja de $50. El ranking cuenta la ganancia neta, así que recargar no ayuda a subir.</small>
+      </fieldset>
+      <div class="grupo">
+        <label class="interruptor"><input type="checkbox" name="juegosLibres" checked> Permitir juegos individuales en el celular</label>
+        <small>Mientras no haya mesa en vivo, cada quien puede jugar ruleta, blackjack o videobingo por su cuenta.</small>
+      </div>
+    </form>
+    <div style="display:grid;gap:1rem">
+      <section class="hoja">
+        <h2>Juegos de la noche</h2>
+        <ul class="lista-juegos-prep" id="lista-juegos"></ul>
+        <p class="suave">Todos usan dinero ficticio de modo demo: cada jugador empieza con $1,000 y no se puede depositar ni retirar dinero real.</p>
+      </section>
+      <button class="btn btn-rosa btn-grande" id="btn-abrir">Abrir casino</button>
+      <p class="suave" id="error-abrir" role="alert"></p>
+    </div>
+  </div>
+</main>
+
+<!-- Casino abierto -->
+<div class="casino" id="v-casino" hidden>
+  <header class="tope">
+    <span class="logo">Casino en Vivo</span>
+    <span class="codigo-mini" id="codigo-mini"></span>
+    <span class="juego-actual" id="juego-actual"></span>
+    <span class="espacio"></span>
+    <button class="btn btn-chico btn-fantasma" id="btn-juegos">Juegos</button>
+    <button class="btn btn-chico btn-fantasma" id="btn-reglas" hidden>Reglas de la mesa</button>
+    <button class="btn btn-chico btn-fantasma" id="btn-ranking">Ranking</button>
+    <button class="btn btn-chico btn-fantasma" id="btn-voz" aria-pressed="true">Voz: sí</button>
+    <button class="btn btn-chico btn-fantasma" id="btn-completa">Pantalla completa</button>
+    <button class="btn btn-chico btn-fantasma" id="btn-menu-casino">Casino</button>
+  </header>
+
+  <section class="lobby" id="s-lobby" hidden>
+    <div class="qr"><img id="qr-grande" alt="Código QR para unirse"></div>
+    <div>
+      <h2>Únete desde tu celular</h2>
+      <p class="url">Escanea el QR o entra a <b id="url-texto"></b> y teclea:</p>
+      <div class="codigo-grande" id="codigo-grande"></div>
+      <div class="jugadores-lobby" id="jugadores-lobby" aria-live="polite"></div>
+      <p class="elige">Elige un juego para la mesa en vivo</p>
+      <div class="juegos-rejilla" id="juegos-lobby"></div>
+      <p class="suave" id="aviso-red" style="margin-top:1rem"></p>
+    </div>
+  </section>
+
+  <section class="mesa" id="s-mesa" hidden>
+    <div class="escenario" id="escenario"></div>
+    <aside class="lateral" id="lateral">
+      <div class="qr-esquina">
+        <div class="qr"><img id="qr-chico" alt="Código QR para unirse"></div>
+        <div><span class="suave">Para entrar</span><b id="codigo-esquina"></b></div>
+      </div>
+      <div>
+        <h3>Ranking</h3>
+        <ol class="ranking" id="ranking-lateral"></ol>
+      </div>
+      <div class="bloque-feed">
+        <h3>Ganancias recientes</h3>
+        <ul class="feed" id="feed"></ul>
+      </div>
+    </aside>
+  </section>
+
+  <section class="vista-podio" id="s-podio" hidden>
+    <h2>¡Gracias por jugar!</h2>
+    <div class="podio" id="podio"></div>
+    <div class="hoja">
+      <h3>Ganancia neta de todos</h3>
+      <ol class="ranking" id="ranking-podio" style="color:var(--tinta)"></ol>
+    </div>
+    <div class="fila-botones" style="justify-content:center">
+      <button class="btn btn-rosa btn-grande" id="btn-volver">Seguir jugando</button>
+    </div>
+  </section>
+</div>
+
+<dialog id="dlg-juegos" aria-labelledby="t-juegos">
+  <form method="dialog">
+    <div class="dialogo-cuerpo">
+      <h2 id="t-juegos">Cambiar la mesa en vivo</h2>
+      <p class="suave" id="nota-juegos"></p>
+      <div class="juegos-rejilla" id="juegos-dlg"></div>
+    </div>
+    <div class="dialogo-pie">
+      <button class="btn btn-fantasma" type="button" id="btn-cerrar-mesa">Quitar la mesa</button>
+      <button class="btn btn-nopal" value="cancelar">Cerrar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg-reglas" aria-labelledby="t-reglas">
+  <form method="dialog">
+    <div class="dialogo-cuerpo">
+      <h2 id="t-reglas">Reglas de la mesa</h2>
+      <p class="suave" id="nota-reglas"></p>
+      <div id="form-reglas"></div>
+    </div>
+    <div class="dialogo-pie">
+      <button class="btn btn-fantasma" value="cancelar">Cancelar</button>
+      <button class="btn btn-nopal" value="ok">Guardar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg-ranking" aria-labelledby="t-ranking">
+  <form method="dialog">
+    <div class="dialogo-cuerpo">
+      <h2 id="t-ranking">Ranking</h2>
+      <p class="suave">Ordenado por ganancia neta: saldo actual menos el dinero ficticio recibido.</p>
+      <ol class="ranking" id="ranking-dlg"></ol>
+    </div>
+    <div class="dialogo-pie"><button class="btn btn-nopal" value="ok">Cerrar</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlg-casino" aria-labelledby="t-casino">
+  <form method="dialog">
+    <div class="dialogo-cuerpo">
+      <h2 id="t-casino">Casino</h2>
+      <div id="form-casino-dlg"></div>
+      <div class="fila-botones" style="margin-top:1rem">
+        <button class="btn" type="button" id="btn-podio">Terminar y mostrar el podio</button>
+        <a class="btn btn-fantasma" href="/baraja" target="_blank" rel="noopener">Editar la baraja de lotería</a>
+        <a class="btn btn-fantasma" href="/imprimir" target="_blank" rel="noopener">Imprimir tablas</a>
+        <button class="btn btn-fantasma" type="button" id="btn-cerrar">Cerrar el casino</button>
+      </div>
+    </div>
+    <div class="dialogo-pie">
+      <button class="btn btn-fantasma" value="cancelar">Cancelar</button>
+      <button class="btn btn-nopal" value="ok">Guardar</button>
+    </div>
+  </form>
+</dialog>
+
+<script type="module" src="/js/tv/app.js"></script>
+</body>
+</html>

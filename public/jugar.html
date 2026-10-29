@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#161c4d">
+<title>Jugar · Casino en Vivo</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎰</text></svg>">
+<link rel="stylesheet" href="/css/estilo.css">
+<link rel="stylesheet" href="/css/casino.css">
+<link rel="stylesheet" href="/css/cel.css">
+</head>
+<body>
+<!-- Registro -->
+<section id="s-unirse" class="unirse" hidden>
+  <form class="hoja" id="form-unirse" autocomplete="off">
+    <h1 style="font-size:2rem">Regístrate en modo demo</h1>
+    <p class="suave">Recibes <b>$1,000 USD ficticios</b> para jugar en todas las mesas. No tienen valor real.</p>
+    <label class="campo" id="campo-codigo"><span>Código de la sala</span>
+      <input class="codigo-input" id="in-codigo" type="tel" inputmode="numeric" maxlength="7" placeholder="000 000">
+    </label>
+    <label class="campo"><span>Tu nombre</span>
+      <input id="in-nombre" type="text" maxlength="20" placeholder="Como te dicen" autocapitalize="words" required>
+    </label>
+    <div class="campo"><span class="campo-titulo">Elige tu avatar</span><div class="avatares" id="avatares" role="radiogroup" aria-label="Avatar"></div></div>
+    <button class="btn btn-rosa btn-grande" style="width:100%" type="submit" id="btn-entrar">Entrar y recibir $1,000</button>
+    <p class="suave" id="error-unirse" role="alert" style="min-height:1.4em;margin:.8rem 0 0"></p>
+  </form>
+</section>
+
+<section id="s-cargando" hidden><p class="suave" style="margin:40vh auto 0;text-align:center">Conectando…</p></section>
+
+<section id="s-salida" class="unirse" hidden>
+  <div class="hoja" style="text-align:center">
+    <h2 id="salida-titulo">Saliste del casino</h2>
+    <p id="salida-texto"></p>
+    <a class="btn btn-rosa" href="/">Ir al inicio</a>
+  </div>
+</section>
+
+<div class="app" id="s-app" hidden>
+  <header class="cab-cel">
+    <span class="av" id="yo-av" aria-hidden="true"></span>
+    <span class="nom" id="yo-nombre"></span>
+    <div class="saldo" aria-live="polite"><span class="dinero" id="saldo"></span><small>saldo ficticio</small></div>
+  </header>
+  <main class="contenido">
+    <section id="t-vivo"></section>
+    <section id="t-juegos" hidden></section>
+    <section id="t-cuenta" hidden></section>
+  </main>
+  <nav class="nav-cel" aria-label="Secciones">
+    <button type="button" data-tab="vivo" aria-current="page"><span aria-hidden="true">📺</span>En vivo<i class="punto" hidden></i></button>
+    <button type="button" data-tab="juegos"><span aria-hidden="true">🎲</span>Juegos</button>
+    <button type="button" data-tab="cuenta"><span aria-hidden="true">👛</span>Mi cuenta</button>
+  </nav>
+</div>
+
+<script type="module" src="/js/cel/app.js"></script>
+</body>
+</html>
